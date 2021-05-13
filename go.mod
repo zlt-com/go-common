@@ -1,4 +1,4 @@
-module github.com/zlt-com/golang/common
+module github.com/zlt-com/go-common
 
 go 1.15
 
