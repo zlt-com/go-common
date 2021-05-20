@@ -12,9 +12,8 @@ import (
 )
 
 // JSON2Object 类型转换
-func JSON2Object(js string, v interface{}) interface{} {
-	json.Unmarshal([]byte(js), v)
-	return v
+func JSON2Object(js string, v interface{}) error {
+	return json.Unmarshal([]byte(js), v)
 }
 
 // Byte2Object Byte2Object
