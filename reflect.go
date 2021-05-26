@@ -52,11 +52,13 @@ func ReflectFilde(i interface{}, name string) (field interface{}) {
 	refValue := reflect.ValueOf(i)
 	for reflectType.Kind() == reflect.Slice || reflectType.Kind() == reflect.Ptr {
 		reflectType = reflectType.Elem()
+		refValue = refValue.Elem()
 	}
 
 	for i := 0; i < reflectType.NumField(); i++ {
 		if fieldStruct := reflectType.Field(i); ast.IsExported(fieldStruct.Name) && name == fieldStruct.Name {
 			field = refValue.Field(i).Interface()
+			break
 		}
 	}
 	return
@@ -87,6 +89,9 @@ func ReflectMethod(i interface{}, name string) []reflect.Value {
 }
 
 func ReflectInterfaceName(i interface{}) string {
-	refValue := reflect.ValueOf(i)
-	return refValue.Type().Name()
+	reflectType := reflect.TypeOf(i)
+	for reflectType.Kind() == reflect.Slice || reflectType.Kind() == reflect.Ptr {
+		reflectType = reflectType.Elem()
+	}
+	return reflectType.Name()
 }
