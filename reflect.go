@@ -71,6 +71,7 @@ func ReflectFildes(i interface{}) (field map[string]interface{}) {
 	refValue := reflect.ValueOf(i)
 	for reflectType.Kind() == reflect.Slice || reflectType.Kind() == reflect.Ptr {
 		reflectType = reflectType.Elem()
+		refValue = refValue.Elem()
 	}
 
 	for i := 0; i < reflectType.NumField(); i++ {

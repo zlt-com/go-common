@@ -1,6 +1,8 @@
 package common
 
 import (
+	"bytes"
+	"encoding/gob"
 	"encoding/json"
 	"fmt"
 	"math"
@@ -10,6 +12,32 @@ import (
 	"strings"
 	"time"
 )
+
+//序列化
+func Serialize(value interface{}) ([]byte, error) {
+	buf := bytes.Buffer{}
+	enc := gob.NewEncoder(&buf)
+	gob.Register(value)
+
+	err := enc.Encode(&value)
+	if err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+//反序列化
+func Deserialize(valueBytes []byte) (interface{}, error) {
+	var value interface{}
+	buf := bytes.NewBuffer(valueBytes)
+	dec := gob.NewDecoder(buf)
+
+	err := dec.Decode(&value)
+	if err != nil {
+		return nil, err
+	}
+	return value, nil
+}
 
 // JSON2Object 类型转换
 func JSON2Object(js string, v interface{}) (interface{}, error) {

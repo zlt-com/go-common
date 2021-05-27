@@ -18,14 +18,14 @@ const (
 // Contains 判断是否包含
 func Contains(element interface{}, arrays interface{}) bool {
 	targetValue := reflect.ValueOf(arrays)
-	switch reflect.TypeOf(arrays).Kind() {
-	case reflect.Slice, reflect.Array:
+	switch reflect.TypeOf(arrays).Kind().String() {
+	case reflect.Slice.String():
 		for i := 0; i < targetValue.Len(); i++ {
 			if targetValue.Index(i).Interface() == element {
 				return true
 			}
 		}
-	case reflect.Map:
+	case reflect.Map.String():
 		if targetValue.MapIndex(reflect.ValueOf(element)).IsValid() {
 			return true
 		}
