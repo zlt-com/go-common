@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"go/ast"
 	"reflect"
+	"strings"
 )
 
 //浅克隆，可以克隆任意数据类型，对指针类型子元素无法克隆
@@ -76,7 +77,7 @@ func ReflectFildes(i interface{}) (field map[string]interface{}) {
 
 	for i := 0; i < reflectType.NumField(); i++ {
 		if fieldStruct := reflectType.Field(i); ast.IsExported(fieldStruct.Name) {
-			field[fieldStruct.Name] = refValue.Field(i).Interface()
+			field[strings.ToLower(fieldStruct.Name)] = refValue.Field(i).Interface()
 		}
 	}
 	return
@@ -95,4 +96,14 @@ func ReflectInterfaceName(i interface{}) string {
 		reflectType = reflectType.Elem()
 	}
 	return reflectType.Name()
+}
+
+func ReflectInterfaceTypeValue(i interface{}) (reflectType reflect.Type, reflectValue reflect.Value) {
+	reflectType = reflect.TypeOf(i)
+	reflectValue = reflect.ValueOf(i)
+	for reflectType.Kind() == reflect.Slice || reflectType.Kind() == reflect.Ptr {
+		reflectType = reflectType.Elem()
+		reflectValue = reflectValue.Elem()
+	}
+	return
 }

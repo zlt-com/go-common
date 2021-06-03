@@ -46,9 +46,9 @@ func JSON2Object(js string, v interface{}) (interface{}, error) {
 }
 
 // Byte2Object Byte2Object
-func Byte2Object(by []byte, v interface{}) interface{} {
-	json.Unmarshal(by, v)
-	return v
+func Byte2Object(by []byte, v interface{}) error {
+	err := json.Unmarshal(by, v)
+	return err
 }
 
 // Object2Byte Object2Byte
@@ -92,20 +92,18 @@ func IntFromFloat64(x float64) int {
 
 // IntFromInterface IntFromInterface
 func IntFromInterface(x interface{}) int {
-	switch x.(type) {
+	switch v := x.(type) {
 	case string:
-		v, _ := strconv.Atoi(x.(string))
-		return v
+		vv, _ := strconv.Atoi(v)
+		return vv
 	case float64:
-		f := x.(float64)
-		if math.MinInt32 <= f && f <= math.MaxInt32 { // x lies in the integer range
-			whole, fraction := math.Modf(f)
+		if math.MinInt32 <= v && v <= math.MaxInt32 { // x lies in the integer range
+			whole, fraction := math.Modf(v)
 			if fraction >= 0.5 {
 				whole++
 			}
 			return int(whole)
 		}
-		break
 	default:
 		return 0
 	}
@@ -151,8 +149,6 @@ func CoventArray(value interface{}) (list []interface{}) {
 	e := reflect.ValueOf(value).Elem()
 	for i := 0; i < e.NumField(); i++ {
 		varType := e.Type().Field(i).Type
-		// title = append(title, e.Type().Field(i).Tag.Get("note"))
-		// fmt.Println(varType.Name(), e.Type().Field(i).Tag.Get("note"), e.Field(i).Interface())
 		switch varType.Name() {
 		case "string":
 			varName := e.Type().Field(i).Name
@@ -185,7 +181,7 @@ func CoventArray(value interface{}) (list []interface{}) {
 
 //Covent2Map 转换数组类型
 func Covent2Map(value interface{}) map[string]interface{} {
-	list := make(map[string]interface{}, 0)
+	list := make(map[string]interface{})
 	e := reflect.ValueOf(value).Elem()
 	for i := 0; i < e.NumField(); i++ {
 		varName := e.Type().Field(i).Name
@@ -214,4 +210,19 @@ func Object2JSON(obj interface{}) string {
 		return err.Error()
 	}
 	return string(j)
+}
+
+func String(i interface{}) string {
+	switch v := i.(type) {
+	case int:
+		return strconv.Itoa(v)
+	case bool:
+		return strconv.FormatBool(v)
+	case int64:
+		return strconv.FormatInt(v, 10)
+	case float64:
+		return strconv.FormatFloat(v, 'f', 10, 64)
+	default:
+		return ""
+	}
 }
