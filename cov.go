@@ -222,7 +222,9 @@ func String(i interface{}) string {
 		return strconv.FormatInt(v, 10)
 	case float64:
 		return strconv.FormatFloat(v, 'f', 10, 64)
+	case string:
+		return v
 	default:
-		return ""
+		return "unknow type"
 	}
 }

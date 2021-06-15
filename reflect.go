@@ -68,13 +68,7 @@ func ReflectFilde(i interface{}, name string) (field interface{}) {
 //反射字段值
 func ReflectFildes(i interface{}) (field map[string]interface{}) {
 	field = map[string]interface{}{}
-	reflectType := reflect.ValueOf(i).Type()
-	refValue := reflect.ValueOf(i)
-	for reflectType.Kind() == reflect.Slice || reflectType.Kind() == reflect.Ptr {
-		reflectType = reflectType.Elem()
-		refValue = refValue.Elem()
-	}
-
+	reflectType, refValue := ReflectInterfaceTypeValue(i)
 	for i := 0; i < reflectType.NumField(); i++ {
 		if fieldStruct := reflectType.Field(i); ast.IsExported(fieldStruct.Name) {
 			field[strings.ToLower(fieldStruct.Name)] = refValue.Field(i).Interface()
@@ -85,16 +79,13 @@ func ReflectFildes(i interface{}) (field map[string]interface{}) {
 
 //反射字段值
 func ReflectMethod(i interface{}, name string) []reflect.Value {
-	refValue := reflect.ValueOf(i)
+	_, refValue := ReflectInterfaceTypeValue(i)
 	method := refValue.MethodByName(name)
-	return method.Call(nil)
+	return method.Call([]reflect.Value{})
 }
 
 func ReflectInterfaceName(i interface{}) string {
-	reflectType := reflect.TypeOf(i)
-	for reflectType.Kind() == reflect.Slice || reflectType.Kind() == reflect.Ptr {
-		reflectType = reflectType.Elem()
-	}
+	reflectType, _ := ReflectInterfaceTypeValue(i)
 	return reflectType.Name()
 }
 
