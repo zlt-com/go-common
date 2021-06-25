@@ -48,7 +48,7 @@ func DeepClone(src interface{}) interface{} {
 
 //反射字段值
 func ReflectFilde(i interface{}, name string) (field interface{}) {
-	field = map[string]interface{}{}
+	// field = map[string]interface{}{}
 	reflectType := reflect.ValueOf(i).Type()
 	refValue := reflect.ValueOf(i)
 	for reflectType.Kind() == reflect.Slice || reflectType.Kind() == reflect.Ptr {
